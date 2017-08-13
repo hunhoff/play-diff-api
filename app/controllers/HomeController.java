@@ -1,9 +1,6 @@
 package controllers;
-import java.io.IOException;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -37,7 +34,7 @@ public class HomeController extends Controller {
 	 * Handle the 'submit right' request 
 	 * @param id - use the id from route to set the right input
 	 */
-	public Result submitRight(String id) {
+	public Result createRight(String id) {
 
 		JsonNode json = request().body().asJson();
 
@@ -48,15 +45,24 @@ public class HomeController extends Controller {
 			if(content == null) {
 				return badRequest("Missing parameter [input]");
 			} else{ 
-				if(diffTools.checkBase64(content)){
-					right.put(id,content);
+				//verify if the id was already created
+				try {
+					right.get(id).isEmpty();
 					ObjectNode result = Json.newObject();
-					result.put("id", id);
-					result.put("content", content);
-					result.put("result", "created");
-					return ok(result);
-				}else{
-					return badRequest("Input is not Base64");
+					result.put("input", content);
+					result.put("result", "id already created, update instead");
+					return status(409, result);
+				} catch (Exception e) {
+					if(diffTools.checkBase64(content)){
+						right.put(id,content);
+						ObjectNode result = Json.newObject();
+						result.put("id", id);
+						result.put("content", content);
+						result.put("result", "created");
+						return created(result);
+					} else{
+						return badRequest("Input is not Base64");
+					}
 				}
 			}
 		}
@@ -66,7 +72,7 @@ public class HomeController extends Controller {
 	 * Handle the 'submit left' request 
 	 * @param id - use the id from route to set the left input
 	 */
-	public Result submitLeft(String id) {
+	public Result createLeft(String id) {
 
 		JsonNode json = request().body().asJson();
 
@@ -77,18 +83,165 @@ public class HomeController extends Controller {
 			if(content == null) {
 				return badRequest("Missing parameter [input]");
 			} else{ 
-				if(diffTools.checkBase64(content)){
-					left.put(id,content);
+				//verify if the id was already created
+				try {
+					left.get(id).isEmpty();
 					ObjectNode result = Json.newObject();
-					result.put("id", id);
-					result.put("content", content);
-					result.put("result", "created");
-					return ok(result);
-				}else{
-					return badRequest("Input is not Base64");
+					result.put("input", content);
+					result.put("result", "id already created, update instead");
+					return status(409, result);
+				} catch (Exception e) {
+					if(diffTools.checkBase64(content)){
+						left.put(id,content);
+						ObjectNode result = Json.newObject();
+						result.put("id", id);
+						result.put("content", content);
+						result.put("result", "created");
+						return created(result);
+					} else{
+						return badRequest("Input is not Base64");
+					}
 				}
 			}
 		}
+	}
+
+	/**
+	 * Handle the 'submit right' request 
+	 * @param id - use the id from route to set the right input
+	 */
+	public Result updateLeft(String id) {
+
+		JsonNode json = request().body().asJson();
+
+		if(json == null) {
+			return badRequest("Expecting Json data");
+		} else {
+			String content = json.findPath("input").textValue();
+			if(content == null) {
+				return badRequest("Missing parameter [input]");
+			} else{ 
+				//verify if the id was already created
+				try {
+					left.get(id).isEmpty();
+					if(diffTools.checkBase64(content)){
+						left.put(id,content);
+						ObjectNode result = Json.newObject();
+						result.put("id", id);
+						result.put("content", content);
+						result.put("result", "updated");
+						return ok(result);
+					} else{
+						return badRequest("Input is not Base64");
+					}
+				} catch (Exception e) {
+					ObjectNode result = Json.newObject();
+					result.put("id", id);
+					result.put("content", content);
+					result.put("result", "id not found, create instead");
+					return notFound(result);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Handle the 'submit right' request 
+	 * @param id - use the id from route to set the right input
+	 */
+	public Result updateRight(String id) {
+
+		JsonNode json = request().body().asJson();
+
+		if(json == null) {
+			return badRequest("Expecting Json data");
+		} else {
+			String content = json.findPath("input").textValue();
+			if(content == null) {
+				return badRequest("Missing parameter [input]");
+			} else{ 
+				//verify if the id was already created
+				try {
+					right.get(id).isEmpty();
+					if(diffTools.checkBase64(content)){
+						right.put(id,content);
+						ObjectNode result = Json.newObject();
+						result.put("id", id);
+						result.put("content", content);
+						result.put("result", "updated");
+						return ok(result);
+					} else{
+						return badRequest("Input is not Base64");
+					}
+				} catch (Exception e) {
+					ObjectNode result = Json.newObject();
+					result.put("id", id);
+					result.put("content", content);
+					result.put("result", "id not found, create instead");
+					return notFound(result);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Handle the 'submit right' request 
+	 * @param id - use the id from route to set the right input
+	 */
+	public Result decodeLeftToString(String id) {
+
+		//get left and right inputs
+		String leftEncoded = left.get(id);
+
+		//verify if the input exists
+		try {
+			leftEncoded.isEmpty();	
+		} catch (Exception e) {
+			ObjectNode result = Json.newObject();
+			result.put("result", "missing input");
+			return notFound(result);
+		}
+
+		//decode from base64
+		byte[] leftDecoded = Base64.decodeBase64(leftEncoded);
+		//convert bytes to String
+		String leftDecodedString = new String(leftDecoded);
+		
+		ObjectNode result = Json.newObject();
+		result.put("input", leftEncoded.toString());
+		result.put("result", leftDecodedString);
+		return ok(result);
+
+	}
+	
+	/**
+	 * Handle the 'submit right' request 
+	 * @param id - use the id from route to set the right input
+	 */
+	public Result decodeRightToString(String id) {
+
+		//get right inputs
+		String rightEncoded = right.get(id);
+
+		//verify if the input exists
+		try {
+			rightEncoded.isEmpty();	
+		} catch (Exception e) {
+			ObjectNode result = Json.newObject();
+			result.put("result", "missing input");
+			return notFound(result);
+		}
+
+		//decode from base64
+		byte[] rightDecoded = Base64.decodeBase64(rightEncoded);
+		//convert bytes to String
+		String rightDecodedString = new String(rightDecoded);
+		
+		ObjectNode result = Json.newObject();
+		result.put("input", rightEncoded.toString());
+		result.put("result", rightDecodedString);
+		return ok(result);
+
 	}
 
 	/**

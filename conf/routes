@@ -3,11 +3,24 @@
 # ~~~~
 # An example controller showing a sample home page
 GET     /                          controllers.HomeController.index
-# Add left file
-POST    /v1/diff/:id/left           controllers.HomeController.submitLeft(id: String)
 
-# Add right file
-POST    /v1/diff/:id/right          controllers.HomeController.submitRight(id: String)
+# Add left input
+POST    /v1/diff/:id/left          controllers.HomeController.createLeft(id: String)
+
+# Add right input
+POST    /v1/diff/:id/right         controllers.HomeController.createRight(id: String)
+
+# update left input
+PUT    /v1/diff/:id/left           controllers.HomeController.updateLeft(id: String)
+
+# update right input
+PUT    /v1/diff/:id/right          controllers.HomeController.updateRight(id: String)
 
 # Check file differences 
 GET    /v1/diff/:id                controllers.HomeController.checkDifference(id: String)
+
+# Decode left input 
+GET    /v1/diff/:id/left/decode    controllers.HomeController.decodeLeftToString(id: String)
+
+# Decode right input 
+GET    /v1/diff/:id/right/decode    controllers.HomeController.decodeRightToString(id: String)
