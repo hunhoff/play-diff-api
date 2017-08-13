@@ -1,0 +1,350 @@
+{
+	"variables": [],
+	"info": {
+		"name": "AlessandroDiff",
+		"_postman_id": "69444f5e-6f95-2761-720d-fdbbfea2502c",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "check app running /",
+			"request": {
+				"url": {
+					"raw": "http://localhost:9000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"query": [
+						{
+							"key": "left",
+							"value": "c:\\\\CDS\\\\fox.json",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create right input",
+			"request": {
+				"url": {
+					"raw": "http://localhost:9000/v1/diff/test/left",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"v1",
+						"diff",
+						"test",
+						"left"
+					],
+					"query": [
+						{
+							"key": "left",
+							"value": "c:\\\\CDS\\\\fox.json",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"input\":\"MDEyMzQ1Njc4OQ==\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create left input",
+			"request": {
+				"url": {
+					"raw": "http://localhost:9000/v1/diff/test/left",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"v1",
+						"diff",
+						"test",
+						"left"
+					],
+					"query": [
+						{
+							"key": "left",
+							"value": "c:\\\\CDS\\\\fox.json",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"input\":\"MDEyMzQ1Njc4OQ==\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update left input",
+			"request": {
+				"url": {
+					"raw": "http://localhost:9000/v1/diff/test/left",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"v1",
+						"diff",
+						"test",
+						"left"
+					],
+					"query": [
+						{
+							"key": "left",
+							"value": "c:\\\\CDS\\\\fox.json",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"input\":\"MDEyMzQ1Njc4OQ==\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update right input",
+			"request": {
+				"url": {
+					"raw": "http://localhost:9000/v1/diff/test/right",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"v1",
+						"diff",
+						"test",
+						"right"
+					],
+					"query": [
+						{
+							"key": "left",
+							"value": "c:\\\\CDS\\\\fox.json",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"input\":\"MDEyMzQ1Njc4OQ==\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "check differences",
+			"request": {
+				"url": {
+					"raw": "http://localhost:9000/v1/diff/test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"v1",
+						"diff",
+						"test"
+					],
+					"query": [
+						{
+							"key": "left",
+							"value": "c:\\\\CDS\\\\fox.json",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"input\":\"MDEyMzQ1Njc4OQ==\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get right decoded string ",
+			"request": {
+				"url": {
+					"raw": "http://localhost:9000/v1/diff/test/right/decode",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"v1",
+						"diff",
+						"test",
+						"right",
+						"decode"
+					],
+					"query": [
+						{
+							"key": "left",
+							"value": "c:\\\\CDS\\\\fox.json",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"input\":\"MDEyMzQ1Njc4OQ==\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get left decoded string",
+			"request": {
+				"url": {
+					"raw": "http://localhost:9000/v1/diff/test/left/decode",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"v1",
+						"diff",
+						"test",
+						"left",
+						"decode"
+					],
+					"query": [
+						{
+							"key": "left",
+							"value": "c:\\\\CDS\\\\fox.json",
+							"equals": true,
+							"description": "",
+							"disabled": true
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"input\":\"MDEyMzQ1Njc4OQ==\"}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
