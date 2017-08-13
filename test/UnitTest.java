@@ -4,6 +4,8 @@ import static org.junit.Assert.assertFalse;
 import static play.mvc.Http.Status.NOT_FOUND;
 import static play.mvc.Http.Status.OK;
 import static play.mvc.Http.Status.BAD_REQUEST;
+import static play.mvc.Http.Status.CREATED;
+import static play.mvc.Http.Status.CONFLICT;
 import static play.test.Helpers.GET;
 import static play.test.Helpers.contentAsString;
 import static play.test.Helpers.fakeRequest;
@@ -104,46 +106,159 @@ public class UnitTest extends WithApplication {
 	 * Testing create valid input at left 
 	 */
 	@Test
-	public void testvalidLeft() {
+	public void testCreateInputs() {
 		jsonInput0 = Json.newObject();
 		jsonInput0.put("input","QUJDYWJjMTI0w");
 		JsonNode jsonNode = Json.toJson(jsonInput0);
 		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
-		assertEquals(OK, result.status());
+		assertEquals(CREATED, result.status());
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
+		assertEquals(CREATED, result.status());
 	}
-
+	
 	/**
-	 * Testing create valid input at right 
+	 * Testing create valid input at left 
 	 */
 	@Test
-	public void testValidRight() {
+	public void testJsonFormat() {
+		Result result = route(app, requestWithTextBody("POST","/v1/diff/test/left","should fail"));
+		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Expecting Json data"));
+		result = route(app, requestWithTextBody("POST","/v1/diff/test/right","should fail"));
+		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Expecting Json data"));
+		result = route(app, requestWithTextBody("PUT","/v1/diff/test/right","should fail"));
+		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Expecting Json data"));
+		result = route(app, requestWithTextBody("PUT","/v1/diff/test/right","should fail"));
+		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Expecting Json data"));
+	}
+	
+	/**
+	 * Testing create valid input at left 
+	 */
+	@Test
+	public void testForParameter() {
+		jsonInput0 = Json.newObject();
+		jsonInput0.put("missingInput","QUJDYWJjMTI0w");
+		JsonNode jsonNode = Json.toJson(jsonInput0);
+		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
+		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Missing parameter [input]"));
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
+		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Missing parameter [input]"));
+		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/right",jsonNode));
+		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Missing parameter [input]"));
+		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/right",jsonNode));
+		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Missing parameter [input]"));
+	}
+	
+	/**
+	 * Testing conflict left, already created 
+	 */
+	@Test
+	public void testConflictsWhileCreatingInputs() {
 		jsonInput0 = Json.newObject();
 		jsonInput0.put("input","QUJDYWJjMTI0w");
 		JsonNode jsonNode = Json.toJson(jsonInput0);
-		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
-		assertEquals(OK, result.status());
+		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
+		assertEquals(CONFLICT, result.status());
+		assertTrue(contentAsString(result).contains("id already created, update instead"));
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
+		assertEquals(CONFLICT, result.status());
+		assertTrue(contentAsString(result).contains("id already created, update instead"));
 	}
-
+	
 	/**
-	 * Testing missing input parameter right
+	 * Testing conflict left, already created 
 	 */
 	@Test
-	public void testMissingInputParamRight() {
+	public void testUpdateInputs() {
 		jsonInput0 = Json.newObject();
-		jsonInput0.put("unexpected","QUJDYWJjMTI0w");
+		jsonInput0.put("input","QUJDYWJjMTI0w");
 		JsonNode jsonNode = Json.toJson(jsonInput0);
-		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
-		assertEquals(BAD_REQUEST, result.status());
+		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
+		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/left",jsonNode));
+		assertEquals(OK, result.status());
+		assertTrue(contentAsString(result).contains("updated"));
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
+		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/right",jsonNode));
+		assertEquals(OK, result.status());
+		assertTrue(contentAsString(result).contains("updated"));
 	}
+	
+	/**
+	 * Testing conflict left, already created 
+	 */
+	@Test
+	public void testNotFoundWhenUpdating() {
+		jsonInput0 = Json.newObject();
+		jsonInput0.put("input","QUJDYWJjMTI0w");
+		JsonNode jsonNode = Json.toJson(jsonInput0);
+		Result result = route(app, requestWithJsonBody("PUT","/v1/diff/test/left",jsonNode));
+		assertEquals(NOT_FOUND, result.status());
+		assertTrue(contentAsString(result).contains("id not found, create instead"));
+		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/right",jsonNode));
+		assertEquals(NOT_FOUND, result.status());
+		assertTrue(contentAsString(result).contains("id not found, create instead"));
+	}
+	
+	/**
+	 * Testing root path using route
+	 */
+	@Test
+	public void testNotFoundWhenDecoding() {
+		RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test/left/decode");
+		Result result = route(app, request);
+		assertEquals(NOT_FOUND, result.status());
+		assertTrue(contentAsString(result).contains("missing input"));
+		request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test/right/decode");
+		result = route(app, request);
+		assertEquals(NOT_FOUND, result.status());
+		assertTrue(contentAsString(result).contains("missing input"));
+	}
+	/**
+	 * Testing create valid input at left 
+	 */
+	@Test
+	public void testDecodeInputs() {
+		jsonInput0 = Json.newObject();
+		jsonInput0.put("input","QUJDYWJjMTI0w");
+		JsonNode jsonNode = Json.toJson(jsonInput0);
+		
+		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
+		assertEquals(CREATED, result.status());
+		RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test/left/decode");
+		result = route(app, request);
+		assertEquals(OK, result.status());
+		assertTrue(contentAsString(result).contains("ABCabc124"));
+			
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
+		assertEquals(CREATED, result.status());
+		request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test/left/decode");
+		result = route(app, request);
+		assertEquals(OK, result.status());
+		assertTrue(contentAsString(result).contains("ABCabc124"));
+	}
+	
+	
 	/**
 	 * Testing missing input parameter left
 	 */
 	@Test
-	public void testMissingInputParamLeft() {
+	public void testMissingInputParams() {
 		jsonInput0 = Json.newObject();
 		jsonInput0.put("unexpected","QUJDYWJjMTI0w");
 		JsonNode jsonNode = Json.toJson(jsonInput0);
 		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
+		assertEquals(BAD_REQUEST, result.status());
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
 		assertEquals(BAD_REQUEST, result.status());
 	}
 	
@@ -151,26 +266,34 @@ public class UnitTest extends WithApplication {
 	 * Testing is the left input is base64
 	 */
 	@Test
-	public void testBase64Left() {
+	public void testBase64() {
 		jsonInput0 = Json.newObject();
 		jsonInput0.put("input","Q#JDYWJjMTI0w");
 		JsonNode jsonNode = Json.toJson(jsonInput0);
 		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
 		assertEquals(BAD_REQUEST, result.status());
-	}
-	
-	/**
-	 * Testing is the right input is base64
-	 */
-	@Test
-	public void testBase64Right() {
-		jsonInput0 = Json.newObject();
-		jsonInput0.put("input","Q#JDYWJjMTI0w");
-		JsonNode jsonNode = Json.toJson(jsonInput0);
-		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
+		assertTrue(contentAsString(result).contains("Input is not Base64"));
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
 		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Input is not Base64"));
+		
+		//create inputs
+		jsonInput0.put("input","QUJDYWJjMTI0w");
+		jsonNode = Json.toJson(jsonInput0);
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
+		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
+		
+		//trying to update with nonbase64 value
+		jsonInput0.put("input","Q#JDYWJjMTI0w");
+		jsonNode = Json.toJson(jsonInput0);
+		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/right",jsonNode));
+		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Input is not Base64"));
+		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/left",jsonNode));
+		assertEquals(BAD_REQUEST, result.status());
+		assertTrue(contentAsString(result).contains("Input is not Base64"));
 	}
-	
+
 	/**
 	 * Testing diff - equal left and right  
 	 */
@@ -183,8 +306,8 @@ public class UnitTest extends WithApplication {
 		Result result1 = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
 		Result result2 = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
 
-		assertEquals(OK, result1.status());
-		assertEquals(OK, result2.status());
+		assertEquals(CREATED, result1.status());
+		assertEquals(CREATED, result2.status());
 
 		RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test");
 		Result result = route(app, request);
@@ -207,8 +330,8 @@ public class UnitTest extends WithApplication {
 		Result result1 = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode0));
 		Result result2 = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode1));
 
-		assertEquals(OK, result1.status());
-		assertEquals(OK, result2.status());
+		assertEquals(CREATED, result1.status());
+		assertEquals(CREATED, result2.status());
 
 		RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test");
 		Result result = route(app, request);
@@ -231,8 +354,8 @@ public class UnitTest extends WithApplication {
 		Result result1 = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode0));
 		Result result2 = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode1));
 
-		assertEquals(OK, result1.status());
-		assertEquals(OK, result2.status());
+		assertEquals(CREATED, result1.status());
+		assertEquals(CREATED, result2.status());
 
 		RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test");
 		Result result = route(app, request);
@@ -251,7 +374,7 @@ public class UnitTest extends WithApplication {
 
 		Result result1 = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
 		
-		assertEquals(OK, result1.status());
+		assertEquals(CREATED, result1.status());
 		
 		RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test");
 		Result result = route(app, request);
@@ -270,7 +393,7 @@ public class UnitTest extends WithApplication {
 
 		Result result1 = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
 		
-		assertEquals(OK, result1.status());
+		assertEquals(CREATED, result1.status());
 		
 		RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test");
 		Result result = route(app, request);
@@ -297,6 +420,23 @@ public class UnitTest extends WithApplication {
 	public static <T> RequestBuilder requestWithJsonBody(String method, String uri, JsonNode jsonNode) { 
 
 		RequestBuilder fakeRequest = Helpers.fakeRequest().method(method).uri(uri).header("context-type", "application/json").bodyJson(jsonNode);
+		/*System.out.println("Created fakeRequest:\n"
+				+"Header: "+fakeRequest.getHeaders().toString()+"\n"
+				+"URI: "+fakeRequest.uri().toString()+"\n"
+				+"bodyJson="+fakeRequest.body().asJson());*/
+		return fakeRequest;  
+	}
+	
+	/**
+	 * Testing requests
+	 * @param method - request method
+	 * @param uri - request URL
+	 * @param string - request body as string
+	 * @return request - request ready to be executed  
+	 */
+	public static <T> RequestBuilder requestWithTextBody(String method, String uri, String asText) { 
+
+		RequestBuilder fakeRequest = Helpers.fakeRequest().method(method).uri(uri).header("context-type", "application/json").bodyText(asText);
 		/*System.out.println("Created fakeRequest:\n"
 				+"Header: "+fakeRequest.getHeaders().toString()+"\n"
 				+"URI: "+fakeRequest.uri().toString()+"\n"
