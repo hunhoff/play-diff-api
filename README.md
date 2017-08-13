@@ -8,7 +8,7 @@
 #
 # Goals
 # Provide 2 http endpoints that accepts JSON base64 encoded binary data on both endpoints
-# Provide another endpoint to show the diff-ed the  
+# Provide another endpoint to show the diff-ed
 #
 # Expected results
 # 	The endpoints should respect RestFull standards
@@ -91,6 +91,10 @@ And then go to http://localhost:9000 to see the running web application.
 ## test
 - UnitTest.java 
   Class responsible to test the app (unit and functional)
+  
+## conf
+- routes
+  This file defines all application routes (Higher priority routes first)
 
 ##################################################################################################################################
 # APP Playbook

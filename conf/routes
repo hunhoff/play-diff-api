@@ -1,7 +1,7 @@
 # Routes
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
-# An example controller showing a sample home page
+# root - simple notification to check if the application is ready
 GET     /                          controllers.HomeController.index
 
 # Add left input
@@ -23,4 +23,4 @@ GET    /v1/diff/:id                controllers.HomeController.checkDifference(id
 GET    /v1/diff/:id/left/decode    controllers.HomeController.decodeLeftToString(id: String)
 
 # Decode right input 
-GET    /v1/diff/:id/right/decode    controllers.HomeController.decodeRightToString(id: String)
+GET    /v1/diff/:id/right/decode   controllers.HomeController.decodeRightToString(id: String)
