@@ -27,6 +27,14 @@ import play.test.Helpers;
 import play.test.WithApplication;
 import services.DiffTools;
 
+/**
+ *******************************************************************************
+ *Class responsible to test the app 
+ *@author      Alessandro Hunhoff 
+ *@author 	   ale0711@gmail.com
+ *******************************************************************************
+ **/
+
 public class UnitTest extends WithApplication {
 
 	private ObjectNode jsonInput0 = Json.newObject();
@@ -283,7 +291,7 @@ public class UnitTest extends WithApplication {
 	}
 
 	/**
-	 * Test base64 diff - same base64 inputs 
+	 * Test base64 diff - same inputs 
 	 */
 	@Test
 	public void testSameBase64Inputs() {
@@ -304,7 +312,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Test base64 diff - different base64 strings with same size.   
+	 * Test base64 diff - different base64 decode strings with same size.   
 	 */
 	@Test
 	public void testDifferentInputsSameSize() {
@@ -348,7 +356,7 @@ public class UnitTest extends WithApplication {
 		RequestBuilder request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test");
 		Result result = route(app, request);
 		assertEquals(OK, result.status());
-		assertTrue(contentAsString(result).contains("inputs are not equal"));
+		assertTrue(contentAsString(result).contains("inputs have different sizes"));
 	}
 
 	/**

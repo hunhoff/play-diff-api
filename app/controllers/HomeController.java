@@ -321,12 +321,12 @@ public class HomeController extends Controller {
 
 			ObjectNode result = Json.newObject();
 			result.put("result", "inputs have the same size");
-			result.put("offset", strList.toString());
+			result.put("diff", strList.toString());
 			return ok(result);
 		}
 		else {
 			ObjectNode result = Json.newObject();
-			result.put("result", "inputs are not equal");
+			result.put("result", "inputs have different sizes");
 			return ok(result);
 		}
 	}

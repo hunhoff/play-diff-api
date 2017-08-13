@@ -9,11 +9,3 @@
 # Set the extra SBT options
 
 -Dsbt.log.format=true
-
--Dhttp.proxyHost=web-proxy.corp.hp.com
-
--Dhttp.proxyPort=8088
-
--Dhttps.proxyHost=web-proxy.corp.hp.com
-
--Dhttps.proxyPort=8088

@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "AlessandroDiff",
-		"_postman_id": "69444f5e-6f95-2761-720d-fdbbfea2502c",
+		"_postman_id": "748eb4ef-5a73-3d1d-3300-7044c3f3e0e0",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -11,7 +11,7 @@
 			"name": "check app running /",
 			"request": {
 				"url": {
-					"raw": "http://localhost:9000",
+					"raw": "http://localhost:9000?",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -48,7 +48,7 @@
 			"name": "Create right input",
 			"request": {
 				"url": {
-					"raw": "http://localhost:9000/v1/diff/test/left",
+					"raw": "http://localhost:9000/v1/diff/test/right",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -58,11 +58,11 @@
 						"v1",
 						"diff",
 						"test",
-						"left"
+						"right"
 					],
 					"query": [
 						{
-							"key": "left",
+							"key": "right",
 							"value": "c:\\\\CDS\\\\fox.json",
 							"equals": true,
 							"description": "",
@@ -91,7 +91,7 @@
 			"name": "Create left input",
 			"request": {
 				"url": {
-					"raw": "http://localhost:9000/v1/diff/test/left",
+					"raw": "http://localhost:9000/v1/diff/test/left?",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -134,7 +134,7 @@
 			"name": "Update left input",
 			"request": {
 				"url": {
-					"raw": "http://localhost:9000/v1/diff/test/left",
+					"raw": "http://localhost:9000/v1/diff/test/left?",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -177,7 +177,7 @@
 			"name": "Update right input",
 			"request": {
 				"url": {
-					"raw": "http://localhost:9000/v1/diff/test/right",
+					"raw": "http://localhost:9000/v1/diff/test/right?",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -220,7 +220,7 @@
 			"name": "check differences",
 			"request": {
 				"url": {
-					"raw": "http://localhost:9000/v1/diff/test",
+					"raw": "http://localhost:9000/v1/diff/test?",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -262,7 +262,7 @@
 			"name": "Get right decoded string ",
 			"request": {
 				"url": {
-					"raw": "http://localhost:9000/v1/diff/test/right/decode",
+					"raw": "http://localhost:9000/v1/diff/test/right/decode?",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -306,7 +306,7 @@
 			"name": "Get left decoded string",
 			"request": {
 				"url": {
-					"raw": "http://localhost:9000/v1/diff/test/left/decode",
+					"raw": "http://localhost:9000/v1/diff/test/left/decode?",
 					"protocol": "http",
 					"host": [
 						"localhost"
