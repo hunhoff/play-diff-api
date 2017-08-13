@@ -1,20 +1,23 @@
 package controllers;
 import java.util.Hashtable;
 import java.util.LinkedList;
-
 import org.apache.commons.codec.binary.Base64;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 import services.DiffTools;
 
 /**
- * This controller contains an action to handle HTTP requests
- * to the application's home page.
+ *******************************************************************************
+ *@author      Alessandro Hunhoff 
+ *@author 	   ale0711@gmail.com
+ *******************************************************************************
+ **/
+
+/**
+ * This controller handle HTTP requests to the application's 
  */
 public class HomeController extends Controller {
 
@@ -31,8 +34,13 @@ public class HomeController extends Controller {
 	}
 
 	/**
-	 * Handle the 'submit right' request 
-	 * @param id - use the id from route to set the right input
+	 * Create right input - route: /v1/diff/:id/right  
+	 * @param id - unique :id used to localized the input 
+	 * @return - bad request if malformed
+	 * @return - bad request if missing expected input parameter
+	 * @return - conflict if the input was already created
+	 * @return - bad request the if input is not base64
+	 * @return - created if the input met the requirements
 	 */
 	public Result createRight(String id) {
 
@@ -69,8 +77,13 @@ public class HomeController extends Controller {
 	}
 
 	/**
-	 * Handle the 'submit left' request 
-	 * @param id - use the id from route to set the left input
+	 * Create left input - route: /v1/diff/:id/left  
+	 * @param id - unique :id used to localized the input 
+	 * @return - bad request if malformed
+	 * @return - bad request if missing expected input parameter
+	 * @return - conflict if the input was already created
+	 * @return - bad request the if input is not base64
+	 * @return - created if all requirements were met
 	 */
 	public Result createLeft(String id) {
 
@@ -107,8 +120,13 @@ public class HomeController extends Controller {
 	}
 
 	/**
-	 * Handle the 'submit right' request 
-	 * @param id - use the id from route to set the right input
+	 * Update left input - route: /v1/diff/:id/left  
+	 * @param id - unique :id used to localized the input 
+	 * @return - bad request if malformed
+	 * @return - bad request if missing expected input parameter
+	 * @return - not found if the input was not created yet
+	 * @return - bad request the if input is not base64
+	 * @return - ok if all requirements were met
 	 */
 	public Result updateLeft(String id) {
 
@@ -146,8 +164,13 @@ public class HomeController extends Controller {
 	}
 
 	/**
-	 * Handle the 'submit right' request 
-	 * @param id - use the id from route to set the right input
+	 * Update right input - route: /v1/diff/:id/right  
+	 * @param id - unique :id used to localized the input 
+	 * @return - bad request if malformed
+	 * @return - bad request if missing expected input parameter
+	 * @return - not found if the input was not created yet
+	 * @return - bad request the if input is not base64
+	 * @return - ok if all requirements were met
 	 */
 	public Result updateRight(String id) {
 
@@ -185,8 +208,10 @@ public class HomeController extends Controller {
 	}
 
 	/**
-	 * Handle the 'submit right' request 
-	 * @param id - use the id from route to set the right input
+	 * Decode left input to string - route: /v1/diff/:id/left/decode  
+	 * @param id - unique :id used to localized the input 
+	 * @return - not found if the input was not created yet
+	 * @return - ok if all requirements were met and, the result of the decoded string
 	 */
 	public Result decodeLeftToString(String id) {
 
@@ -215,8 +240,10 @@ public class HomeController extends Controller {
 	}
 	
 	/**
-	 * Handle the 'submit right' request 
-	 * @param id - use the id from route to set the right input
+	 * Decode right input to string - route: /v1/diff/:id/right/decode  
+	 * @param id - unique :id used to localized the input 
+	 * @return - not found if the input was not created yet
+	 * @return - ok if all requirements were met and, the result of the decoded string
 	 */
 	public Result decodeRightToString(String id) {
 
@@ -245,8 +272,12 @@ public class HomeController extends Controller {
 	}
 
 	/**
-	 * check the difference between left and right
-	 * @param id - use the id from route to execute the diff 
+	 * Check differences between right and left inputs - route: /v1/diff/:id  
+	 * @param id - unique :id used to localized the input 
+	 * @return - bad request if one of the inputs is missing
+	 * @return - ok if the inputs are equal
+	 * @return - ok if the inputs have the same size (showing offset and length of the differences)  
+	 * @return - ok if the inputs are not equal
 	 */
 	public Result checkDifference(String id) {
 

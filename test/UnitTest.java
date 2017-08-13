@@ -33,7 +33,7 @@ public class UnitTest extends WithApplication {
 	private ObjectNode jsonInput1 = Json.newObject();
 	
 	/**
-	 * Testing same string, list containing differences should be zero
+	 * Test same string and, check the size of the differences list (should be zero)
 	 */
 	@Test
 	public void testSameString() {
@@ -42,7 +42,7 @@ public class UnitTest extends WithApplication {
 	}
 
 	/**
-	 * Testing same size and different string, list containing differences should be size one (String beginning)
+	 * Test different strings with same size. List containing differences should be size one (difference at the begin)
 	 */
 	@Test
 	public void testSameSizeDifferentStringAtBegin() {
@@ -52,7 +52,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing same size and different string, list containing differences should be size one (String end)
+	 * Test different strings with same size. List containing differences should be size one (difference at the end)
 	 */
 	@Test
 	public void testSameSizeDifferentStringAtEnd() {
@@ -62,7 +62,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing same size and different string, list containing differences should be size one (multiple differences)
+	 * Test different strings with same size. List containing differences should be size 4 (multiple differences)
 	 */
 	@Test
 	public void testSameSizeDifferentStringMult() {
@@ -72,16 +72,17 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing same string, list containing differences should be zero
+	 * Test completely different strings with same size. 
 	 */
 	@Test
-	public void testSameSizeDifferentString2() {
+	public void testSameSizeButAllDifferent() {
 		DiffTools diffTools = new DiffTools();
-		assertEquals(1,diffTools.diffString("1000001000000==", "0000001000000==").size());
+		assertEquals(1,diffTools.diffString("0000000000", "1111111111").size());
+		assertEquals("[Offset: 0 & Lenght: 10]",diffTools.diffString("0000000000", "1111111111").toString());
 	}
 
 	/**
-	 * Testing root path using route
+	 * Test root path using index
 	 */
 	@Test
 	public void testIndex() {
@@ -93,7 +94,7 @@ public class UnitTest extends WithApplication {
 	}
 
 	/**
-	 * Testing root path using route
+	 * Test root path using route
 	 */
 	@Test
 	public void testIndexByRoute() {
@@ -103,10 +104,10 @@ public class UnitTest extends WithApplication {
 	}
 
 	/**
-	 * Testing create valid input at left 
+	 * Test create valid inputs 
 	 */
 	@Test
-	public void testCreateInputs() {
+	public void testCreateValidInputs() {
 		jsonInput0 = Json.newObject();
 		jsonInput0.put("input","QUJDYWJjMTI0w");
 		JsonNode jsonNode = Json.toJson(jsonInput0);
@@ -117,7 +118,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing create valid input at left 
+	 * Test Json format of create/update methods 
 	 */
 	@Test
 	public void testJsonFormat() {
@@ -127,7 +128,7 @@ public class UnitTest extends WithApplication {
 		result = route(app, requestWithTextBody("POST","/v1/diff/test/right","should fail"));
 		assertEquals(BAD_REQUEST, result.status());
 		assertTrue(contentAsString(result).contains("Expecting Json data"));
-		result = route(app, requestWithTextBody("PUT","/v1/diff/test/right","should fail"));
+		result = route(app, requestWithTextBody("PUT","/v1/diff/test/left","should fail"));
 		assertEquals(BAD_REQUEST, result.status());
 		assertTrue(contentAsString(result).contains("Expecting Json data"));
 		result = route(app, requestWithTextBody("PUT","/v1/diff/test/right","should fail"));
@@ -136,7 +137,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing create valid input at left 
+	 * Test for input parameter on create/update methods
 	 */
 	@Test
 	public void testForParameter() {
@@ -149,7 +150,7 @@ public class UnitTest extends WithApplication {
 		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
 		assertEquals(BAD_REQUEST, result.status());
 		assertTrue(contentAsString(result).contains("Missing parameter [input]"));
-		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/right",jsonNode));
+		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/left",jsonNode));
 		assertEquals(BAD_REQUEST, result.status());
 		assertTrue(contentAsString(result).contains("Missing parameter [input]"));
 		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/right",jsonNode));
@@ -158,7 +159,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing conflict left, already created 
+	 * Test for conflict when already created
 	 */
 	@Test
 	public void testConflictsWhileCreatingInputs() {
@@ -176,7 +177,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing conflict left, already created 
+	 * Test update with already created inputs
 	 */
 	@Test
 	public void testUpdateInputs() {
@@ -194,7 +195,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing conflict left, already created 
+	 * Test update without inputs created (should not allow)
 	 */
 	@Test
 	public void testNotFoundWhenUpdating() {
@@ -210,7 +211,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing root path using route
+	 * Test get decoded string without inputs on both sides (should not found)
 	 */
 	@Test
 	public void testNotFoundWhenDecoding() {
@@ -224,7 +225,7 @@ public class UnitTest extends WithApplication {
 		assertTrue(contentAsString(result).contains("missing input"));
 	}
 	/**
-	 * Testing create valid input at left 
+	 * Test get decoded string with valid inputs on both sides (assert decoded strings)
 	 */
 	@Test
 	public void testDecodeInputs() {
@@ -241,33 +242,20 @@ public class UnitTest extends WithApplication {
 			
 		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
 		assertEquals(CREATED, result.status());
-		request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test/left/decode");
+		request = Helpers.fakeRequest().method(GET).uri("/v1/diff/test/right/decode");
 		result = route(app, request);
 		assertEquals(OK, result.status());
 		assertTrue(contentAsString(result).contains("ABCabc124"));
 	}
-	
-	
+
 	/**
-	 * Testing missing input parameter left
-	 */
-	@Test
-	public void testMissingInputParams() {
-		jsonInput0 = Json.newObject();
-		jsonInput0.put("unexpected","QUJDYWJjMTI0w");
-		JsonNode jsonNode = Json.toJson(jsonInput0);
-		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
-		assertEquals(BAD_REQUEST, result.status());
-		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
-		assertEquals(BAD_REQUEST, result.status());
-	}
-	
-	/**
-	 * Testing is the left input is base64
+	 * Test create/update with non-base64 inputs
 	 */
 	@Test
 	public void testBase64() {
 		jsonInput0 = Json.newObject();
+		
+		//trying to create with non-base64 value
 		jsonInput0.put("input","Q#JDYWJjMTI0w");
 		JsonNode jsonNode = Json.toJson(jsonInput0);
 		Result result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
@@ -277,13 +265,13 @@ public class UnitTest extends WithApplication {
 		assertEquals(BAD_REQUEST, result.status());
 		assertTrue(contentAsString(result).contains("Input is not Base64"));
 		
-		//create inputs
+		//create inputs to allow the update execution
 		jsonInput0.put("input","QUJDYWJjMTI0w");
 		jsonNode = Json.toJson(jsonInput0);
 		result = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
 		result = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
 		
-		//trying to update with nonbase64 value
+		//trying to update with non-base64 value
 		jsonInput0.put("input","Q#JDYWJjMTI0w");
 		jsonNode = Json.toJson(jsonInput0);
 		result = route(app, requestWithJsonBody("PUT","/v1/diff/test/right",jsonNode));
@@ -295,10 +283,10 @@ public class UnitTest extends WithApplication {
 	}
 
 	/**
-	 * Testing diff - equal left and right  
+	 * Test base64 diff - same base64 inputs 
 	 */
 	@Test
-	public void testEqualInputs() {
+	public void testSameBase64Inputs() {
 		jsonInput0 = Json.newObject();
 		jsonInput0.put("input","QUJDYWJjMTI0w");
 		JsonNode jsonNode = Json.toJson(jsonInput0);
@@ -316,7 +304,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing diff - the inputs are different but with the same size  
+	 * Test base64 diff - different base64 strings with same size.   
 	 */
 	@Test
 	public void testDifferentInputsSameSize() {
@@ -340,7 +328,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing diff - test different inputs  
+	 * Test base64 diff - different inputs with different size 
 	 */
 	@Test
 	public void testDifferentInputs() {
@@ -364,7 +352,7 @@ public class UnitTest extends WithApplication {
 	}
 
 	/**
-	 * Testing diff - missing left input  
+	 * Test base64 diff - missing left input  
 	 */
 	@Test
 	public void testMissingLeftInputs() {
@@ -372,7 +360,7 @@ public class UnitTest extends WithApplication {
 		jsonInput0.put("input","QUJDYWJjMTI0w");
 		JsonNode jsonNode = Json.toJson(jsonInput0);
 
-		Result result1 = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
+		Result result1 = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
 		
 		assertEquals(CREATED, result1.status());
 		
@@ -383,7 +371,7 @@ public class UnitTest extends WithApplication {
 	}
 	
 	/**
-	 * Testing diff - missing right input  
+	 * Test base64 diff - missing right input 
 	 */
 	@Test
 	public void testMissingRihtInputs() {
@@ -391,7 +379,7 @@ public class UnitTest extends WithApplication {
 		jsonInput0.put("input","QUJDYWJjMTI0w");
 		JsonNode jsonNode = Json.toJson(jsonInput0);
 
-		Result result1 = route(app, requestWithJsonBody("POST","/v1/diff/test/left",jsonNode));
+		Result result1 = route(app, requestWithJsonBody("POST","/v1/diff/test/right",jsonNode));
 		
 		assertEquals(CREATED, result1.status());
 		

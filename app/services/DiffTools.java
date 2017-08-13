@@ -8,15 +8,23 @@ import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
 
+/**
+ *******************************************************************************
+ *Class responsible to provide tools used by the controller 
+ *@author      Alessandro Hunhoff 
+ *@author 	   ale0711@gmail.com
+ *******************************************************************************
+ **/
+
 public class DiffTools {
 
 	public DiffTools(){}
 
 	/**
-	 * Method that compare the files based on the passed ID
+	 * Method to compare the left and right strings inputs
 	 * @param left - left string that will be compared with the right
 	 * @param right - right string that will be compared with the right
-	 * @return LinkedList<String> - list containing offset and lenght (how many different chars in sequence) 
+	 * @return LinkedList<String> - list containing offset and length (how many different chars in sequence) 
 	 */
 	public LinkedList<String> diffString(String left, String right){
 
@@ -51,9 +59,12 @@ public class DiffTools {
 		return strList;
 	}
 	
+	/**
+	 * Method to check if a string is base64
+	 * @param stringToBeChecked - string to be checked
+	 * @return boolean - true is is base64 
+	 */
 	public boolean checkBase64(String stringToBeChecked){
 		return Base64.isBase64(stringToBeChecked.getBytes());
 	}
-
-
 }
