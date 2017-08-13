@@ -1,0 +1,13 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+# An example controller showing a sample home page
+GET     /                          controllers.HomeController.index
+# Add left file
+POST    /v1/diff/:id/left           controllers.HomeController.submitLeft(id: String)
+
+# Add right file
+POST    /v1/diff/:id/right          controllers.HomeController.submitRight(id: String)
+
+# Check file differences 
+GET    /v1/diff/:id                controllers.HomeController.checkDifference(id: String)
